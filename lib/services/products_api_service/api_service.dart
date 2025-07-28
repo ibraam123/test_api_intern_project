@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/error_logger.dart';
 import 'package:retrofit/http.dart';
 import 'package:test_api_intern_project/models/products/product_model.dart';
-import 'end_points.dart';
+import '../end_points.dart';
 
 part 'api_service.g.dart';
 
