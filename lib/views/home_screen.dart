@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_api_intern_project/models/markets/market_model.dart';
 import 'package:test_api_intern_project/models/products/product_model.dart';
 import 'package:test_api_intern_project/views/product_details.dart';
 
@@ -28,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     Product product = Product(
       name: "kokoko magdy",
       barcode: "464648798",
