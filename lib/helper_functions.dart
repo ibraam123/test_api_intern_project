@@ -17,7 +17,6 @@ Dio createDio() {
     requestHeader: true,
     responseHeader: true,
     error: true,
-
   ));
   return dio;
 }

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'api_service.dart';
+part of 'market_api.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -105,7 +105,7 @@ class _MarketApiService implements MarketApiService {
   }
 
   @override
-  Future<Market> updateProduct(
+  Future<Market> updateMarket(
     String id,
     Map<String, dynamic> market,
     String token,
@@ -138,7 +138,7 @@ class _MarketApiService implements MarketApiService {
   }
 
   @override
-  Future<void> deleteProduct(String id, String token) async {
+  Future<void> deleteMarket(String id, String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};

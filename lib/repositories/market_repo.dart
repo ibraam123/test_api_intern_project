@@ -1,74 +1,63 @@
 import 'package:dio/dio.dart';
-import 'package:test_api_intern_project/services/products_api_service/api_service.dart';
-import '../../models/products/product_model.dart';
+import 'package:test_api_intern_project/services/market_api_service/market_api.dart';
+import '../../models/markets/market_model.dart';
 
-class ProductRepo {
-  final ProductApiService productApiService;
+class MarketRepo {
+  final MarketApiService marketApiService;
   final String token;
 
-  ProductRepo(this.productApiService)
-      : token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODYzZDIwNjBkOTA2M2RjNGI3NzU5N2EiLCJpYXQiOjE3NTEzNzIyOTUsImV4cCI6MTc1OTE0ODI5NX0.3LSBcWQDdxrugBs8lA1LHoXriq2TFaKt-hnS4Z26Jsw";
+  MarketRepo(this.marketApiService)
+      : token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODYzZDcxNmNjNzI5OTdhYzE4ZWEzMDgiLCJpYXQiOjE3NTM4MDQ5NDUsImV4cCI6MTc2MTU4MDk0NX0.9Em6wyUqXRdYnlNXSHCh2Us8cCeRsta9ikUACuxlXV4";
 
-  Future<ProductsResponse> getProducts() async {
+  Future<MarketsResponse> getMarkets() async {
     try {
-      return await productApiService.getProducts(token);
+      return await marketApiService.getMarkets(token);
     } on DioException catch (e) {
-      throw _handleDioError(e, 'Failed to fetch products');
+      throw _handleDioError(e, 'Failed to fetch markets');
     } catch (e) {
-      throw _handleGenericError(e, 'Failed to fetch products');
+      throw _handleGenericError(e, 'Failed to fetch markets');
     }
   }
 
-  Future<SingleProductResponse> getProductById(String id) async {
+  Future<MarketsSingleResponse> getMarketById(String id) async {
     try {
-      return await productApiService.getProductById(id, token);
+      return await marketApiService.getMarketById(id, token);
     } on DioException catch (e) {
-      throw _handleDioError(e, 'Failed to fetch product by ID: $id');
+      throw _handleDioError(e, 'Failed to fetch market by ID: $id');
     } catch (e) {
-      throw _handleGenericError(e, 'Failed to fetch product by ID: $id');
+      throw _handleGenericError(e, 'Failed to fetch market by ID: $id');
     }
   }
 
-  Future<SingleProductResponse> getProductByBarcode(String barcode) async {
+  Future<Market> createMarket(Market market) async {
     try {
-      return await productApiService.getProductByBarcode(barcode, token);
+      return await marketApiService.createMarket(market, token);
     } on DioException catch (e) {
-      throw _handleDioError(e, 'Failed to fetch product by barcode: $barcode');
+      throw _handleDioError(e, 'Failed to create market');
     } catch (e) {
-      throw _handleGenericError(e, 'Failed to fetch product by barcode: $barcode');
+      throw _handleGenericError(e, 'Failed to create market');
     }
   }
 
-  Future<Product> createProduct(Product product) async {
+  Future<Market> updateMarket(String id, Map<String, dynamic> updateData) async {
     try {
-      return await productApiService.createProduct(product, token);
+      return await marketApiService.updateMarket(id, updateData, token);
     } on DioException catch (e) {
-      throw _handleDioError(e, 'Failed to create product');
+      throw _handleDioError(e, 'Failed to update market: $id');
     } catch (e) {
-      throw _handleGenericError(e, 'Failed to create product');
+      throw _handleGenericError(e, 'Failed to update market: $id');
     }
   }
 
-  Future<Product> updateProduct(String id, Map<String, dynamic> updateData) async {
+  Future<void> deleteMarket(String id) async {
     try {
-      return await productApiService.updateProduct(id, updateData, token);
+      await marketApiService.deleteMarket(id, token);
     } on DioException catch (e) {
-      throw _handleDioError(e, 'Failed to update product: $id');
+      throw _handleDioError(e, 'Failed to delete market: $id');
     } catch (e) {
-      throw _handleGenericError(e, 'Failed to update product: $id');
+      throw _handleGenericError(e, 'Failed to delete market: $id');
     }
   }
-
-  Future<void> deleteProduct(String id) async {
-    try {
-      await productApiService.deleteProduct(id, token);
-    } on DioException catch (e) {
-      throw _handleDioError(e, 'Failed to delete product: $id');
-    } catch (e) {
-      throw _handleGenericError(e, 'Failed to delete product: $id');
-    }
-  }
-
   // Error handling helpers
   Exception _handleDioError(DioException e, String defaultMessage) {
     final response = e.response;
@@ -92,7 +81,7 @@ class ProductRepo {
       case 403:
         return ForbiddenException('Operation not permitted');
       case 404:
-        return NotFoundException('Product not found');
+        return NotFoundException('Market not found');
       case 422:
         return ValidationException(errorData?['errors'] ?? 'Validation failed');
       case 500:

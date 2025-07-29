@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:test_api_intern_project/models/markets/market_model.dart';
-import 'package:test_api_intern_project/models/products/product_model.dart';
+import 'package:test_api_intern_project/models/tasks/task_model.dart';
+import 'package:test_api_intern_project/repositories/task_repo.dart';
+import 'package:test_api_intern_project/services/tasks_api_service/task_api.dart';
 import 'package:test_api_intern_project/views/product_details.dart';
 
 import '../helper_functions.dart';
-import '../services/products_api_service/api_service.dart';
-import '../services/products_api_service/product_repo.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,45 +15,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late final ProductRepo repo;
-  late Future<ProductsResponse> usersFuture;
+  late final TaskRepo repo;
+  late Future<TasksResponse> usersFuture;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     final dio = createDio();
-    repo = ProductRepo(ProductApiService(dio));
-    usersFuture = repo.getProducts();
+    // Pass the Dio instance to TaskRepo
+    repo = TaskRepo(TaskApiService(dio)); // Updated to use TaskRepo and TaskApiService
+    usersFuture = repo.getTasks(); // Updated to fetch tasks
   }
 
   @override
   Widget build(BuildContext context) {
-    
-    Product product = Product(
-      name: "kokoko magdy",
-      barcode: "464648798",
-      category: "Beverages",
-      shelf: "A1-B2",
-      stockQuantity: 20,
-      availabilityStatus: "high",
-    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home Screen"),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () {
-              repo.createProduct(product);
-            },
-            icon: const Icon(Icons.add),
-          ),
           IconButton(onPressed: () {}, icon: const Icon(Icons.remove)),
           IconButton(
             onPressed: () {
               setState(() {
-                usersFuture = repo.getProducts();
+                usersFuture = repo.getTasks(); // Updated to refresh tasks
               });
             },
             icon: const Icon(Icons.refresh),
@@ -62,18 +48,18 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: FutureBuilder(
         future: usersFuture,
-        builder: (snapshot, usersFuture) {
-          if (usersFuture.hasData) {
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
             return ListView.builder(
-              itemCount: usersFuture.data!.data.length,
+              itemCount: snapshot.data!.data?.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProductDetails(
-                          id: usersFuture.data!.data[index].id!,
+                        builder: (context) => ProductDetails( // Updated to navigate to TaskDetails
+                          id: snapshot.data!.data![index].id!, // Assuming tasks also have an id
                         ),
                       ),
                     );
@@ -96,22 +82,39 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(usersFuture.data!.data[index].name!),
-                        Text(usersFuture.data!.data[index].category!),
-                        Text(usersFuture.data!.data[index].shelf!),
-                        Text(
-                          usersFuture.data!.data[index].stockQuantity
-                              .toString(),
+                        const SizedBox(height: 5),
+                        Text( // Displaying task id or other relevant task info
+                          snapshot.data!.data![index].id!,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        Text(usersFuture.data!.data[index].availabilityStatus!),
+                        const SizedBox(height: 5),
+                        Text(
+                          snapshot.data!.data![index].title!,
+                          style: const TextStyle(
+                            fontSize: 16,
+                          )
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          snapshot.data!.data![index].description!,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
                       ],
                     ),
                   ),
                 );
               },
             );
-          }else if(usersFuture.hasError){
-            return Center(child: Text(usersFuture.error.toString()));
+          }else if(snapshot.hasError){
+            return Center(child: Text(snapshot.error.toString()));
           }else{
             return const Center(child: CircularProgressIndicator());
           }

@@ -4,7 +4,7 @@ import 'package:retrofit/http.dart';
 import 'package:test_api_intern_project/models/products/product_model.dart';
 import '../end_points.dart';
 
-part 'api_service.g.dart';
+part 'product_api.g.dart';
 
 @RestApi(baseUrl: EndPoints.baseUrl)
 abstract class ProductApiService {

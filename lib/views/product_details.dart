@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import '../helper_functions.dart';
-import '../models/products/product_model.dart';
-import '../services/products_api_service/api_service.dart';
-import '../services/products_api_service/product_repo.dart';
+import 'package:test_api_intern_project/repositories/task_repo.dart';
+import 'package:test_api_intern_project/helper_functions.dart';
+import 'package:test_api_intern_project/repositories/market_repo.dart';
+
+import '../models/tasks/task_model.dart';
+import '../services/tasks_api_service/task_api.dart';
 
 class ProductDetails extends StatefulWidget {
   final String id; // Changed to non-nullable
@@ -13,22 +15,22 @@ class ProductDetails extends StatefulWidget {
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
-  late final ProductRepo repo;
-  late Future<SingleProductResponse> productFuture;
+  late final TaskRepo repo;
+  late Future<TaskSingleResponse> taskFuture;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     final dio = createDio();
-    repo = ProductRepo(ProductApiService(dio));
+    repo = TaskRepo(TaskApiService(dio));
     _loadProduct();
   }
 
   void _loadProduct() {
     setState((){
       try {
-        productFuture = repo.getProductById(
+        taskFuture = repo.getTaskById(
           widget.id,
         );
         // Handle successful response
@@ -50,9 +52,9 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Product Details"), centerTitle: true),
-      body: FutureBuilder<SingleProductResponse>(
-        future: productFuture,
+      appBar: AppBar(title: const Text("Task Details"), centerTitle: true),
+      body: FutureBuilder<TaskSingleResponse>(
+        future: taskFuture,
         builder: (context, snapshot) {
           if (_isLoading && snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -64,7 +66,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('Failed to load product'),
-                  Text('Error: ${snapshot.error}'),
+                  Text('Error: ${snapshot.error.toString()}'),
                   ElevatedButton(
                     onPressed: _loadProduct,
                     child: const Text('Retry'),
@@ -75,58 +77,69 @@ class _ProductDetailsState extends State<ProductDetails> {
           }
 
           if (!snapshot.hasData || snapshot.data?.data == null) {
-            return const Center(child: Text('Product not found'));
+            return const Center(child: Text('Task not found'));
           }
 
-          final product = snapshot.data!.data;
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildInfoRow('Name', product.name ?? 'N/A'),
-                        _buildInfoRow('Barcode', product.barcode ?? 'N/A'),
-                        _buildInfoRow('Category', product.category ?? 'N/A'),
-                        _buildInfoRow('Shelf', product.shelf ?? 'N/A'),
-                        _buildInfoRow('Stock', product.stockQuantity?.toString() ?? 'N/A'),
-                        _buildInfoRow('Status', product.availabilityStatus ?? 'N/A'),
-                        if (product.addedBy != null) ...[
-                          const Divider(),
-                          const Text('Added By:', style: TextStyle(fontWeight: FontWeight.bold)),
-                          _buildInfoRow('Name', product.addedBy!.name),
-                          _buildInfoRow('Email', product.addedBy!.email),
-                          _buildInfoRow('Role', product.addedBy!.role),
+          final task = snapshot.data!.data;
+          return GestureDetector(
+            onTap: () {
+              repo.updateTask(
+                task.id!,
+                {
+                  "title": "Updated Task Title",
+                },
+              );
+              Navigator.pop(context);
+            },
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            task.title!,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            task.description!,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Status: ${task.status ?? 'Not set'}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          const SizedBox(height: 8),
+
                         ],
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                ElevatedButton(onPressed:(){
-                  repo.deleteProduct(product.id!);
-                  Navigator.pop(context);
-                } , child: Text("Delete"))
-              ],
+                ],
+              ),
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
-          Expanded(child: Text(value)),
-        ],
       ),
     );
   }

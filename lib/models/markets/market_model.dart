@@ -39,20 +39,20 @@ class MarketsSingleResponse {
 @JsonSerializable(explicitToJson: true)
 class Market {
   @JsonKey(name: '_id')
-  final String id;
+  final String? id;
   final String name;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   @JsonKey(name: '__v')
   final int? version;
 
-  Market(
+  Market({
     this.id,
-    this.name,
+    required this.name,
     this.createdAt,
     this.updatedAt,
     this.version,
-  );
+  });
 
   factory Market.fromJson(Map<String, dynamic> json) =>
       _$MarketFromJson(json);

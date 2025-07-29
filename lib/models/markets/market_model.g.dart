@@ -35,15 +35,15 @@ Map<String, dynamic> _$MarketsSingleResponseToJson(
 ) => <String, dynamic>{'data': instance.data.toJson()};
 
 Market _$MarketFromJson(Map<String, dynamic> json) => Market(
-  json['_id'] as String,
-  json['name'] as String,
-  json['createdAt'] == null
+  id: json['_id'] as String?,
+  name: json['name'] as String,
+  createdAt: json['createdAt'] == null
       ? null
       : DateTime.parse(json['createdAt'] as String),
-  json['updatedAt'] == null
+  updatedAt: json['updatedAt'] == null
       ? null
       : DateTime.parse(json['updatedAt'] as String),
-  (json['__v'] as num?)?.toInt(),
+  version: (json['__v'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$MarketToJson(Market instance) => <String, dynamic>{

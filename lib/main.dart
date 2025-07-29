@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:test_api_intern_project/views/home_screen.dart';
 
+import 'models/markets/market_model.dart';
+
 void main() {
   runApp(const MyApp());
 }

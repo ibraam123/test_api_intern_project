@@ -4,7 +4,7 @@ import 'package:retrofit/http.dart';
 import 'package:test_api_intern_project/models/markets/market_model.dart';
 import '../end_points.dart';
 
-part 'api_service.g.dart';
+part 'market_api.g.dart';
 
 @RestApi(baseUrl: EndPoints.baseUrl)
 abstract class MarketApiService {
@@ -28,14 +28,14 @@ abstract class MarketApiService {
       );
 
   @PUT("${EndPoints.markets}/{id}")
-  Future<Market> updateProduct(
+  Future<Market> updateMarket(
       @Path("id") String id,
       @Body() Map<String, dynamic> market,
       @Header("Authorization") String token,
       );
 
   @DELETE("${EndPoints.markets}/{id}")
-  Future<void> deleteProduct(
+  Future<void> deleteMarket(
       @Path("id") String id,
       @Header("Authorization") String token,
       );
