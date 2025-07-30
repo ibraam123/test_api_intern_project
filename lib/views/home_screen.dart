@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
-              itemCount: snapshot.data!.data?.length,
+              itemCount: snapshot.data!.data.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ProductDetails( // Updated to navigate to TaskDetails
-                          id: snapshot.data!.data![index].id!, // Assuming tasks also have an id
+                          id: snapshot.data!.data[index].id!, // Assuming tasks also have an id
                         ),
                       ),
                     );
@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         const SizedBox(height: 5),
                         Text( // Displaying task id or other relevant task info
-                          snapshot.data!.data![index].id!,
+                          snapshot.data!.data[index].id!,
                           style: const TextStyle(
                             fontSize: 16,
                             color: Colors.grey,
@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          snapshot.data!.data![index].title!,
+                          snapshot.data!.data[index].title!,
                           style: const TextStyle(
                             fontSize: 16,
                           )

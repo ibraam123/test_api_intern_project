@@ -1,6 +1,7 @@
 class EndPoints {
   static const String baseUrl = "https://marchaindisersbackend.onrender.com/api/";
 
+
   // Auth
   static const String login = "auth/login";
   static const String signup = "auth/signup";

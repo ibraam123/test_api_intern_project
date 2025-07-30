@@ -1,8 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import '../branches/branch_model.dart';
 import '../markets/market_model.dart';
-import '../users/user_model.dart';
-
 part 'task_model.g.dart'; // Fixed typo in filename (was 'tasl_model.g.dart')
 
 @JsonSerializable(explicitToJson: true)
@@ -46,8 +44,10 @@ class Task {
   final String? type;
   final Branch? branchId;
   final Market? marketId;
-  final User? createdBy;
-  final User? assignedTo;
+
+  final Map<String, dynamic>? createdBy;
+  final Map<String, dynamic>? assignedTo;
+
   final String? status;
   final DateTime? scheduledDate;
   final List<String>? attachments;
@@ -74,6 +74,7 @@ class Task {
   });
 
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
+
   Map<String, dynamic> toJson() => _$TaskToJson(this);
 }
 
